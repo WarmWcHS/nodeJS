@@ -1,0 +1,17 @@
+{
+  "name": "express07",
+  "version": "1.0.0",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "實作全域MiddleWare",
+  "dependencies": {
+    "express": "^4.19.2",
+    "moment": "^2.30.1"
+  }
+}
