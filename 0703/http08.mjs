@@ -1,0 +1,91 @@
+import http from "http";
+
+
+const server = http.createServer((request, response) => {
+
+    // response.setHeader("content-type", "text/html;charset=utf-8");
+    response.end(`<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3x4 flex box</title>
+    <style>
+        .row {
+            display: flex;
+            width: 180px;
+
+            .col {
+                width: 60px;
+                height: 30px;
+                display: grid;
+                place-items: center;
+                background-color: #106305;
+                user-select: none;
+
+                &:nth-child(odd) {
+                    background-color: #52f75a;
+                }
+                &.active {
+                background-color: #d7e420;
+            }
+
+            }
+
+            &:nth-child(odd) .col {
+                background-color: #52f75a;
+
+                &:nth-child(odd) {
+                    background-color: #106305;
+                }
+                &.active {
+                background-color: #d7e420;
+            }
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <h1>我看倒像一塊塊綠豆糕</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col">1-1</div>
+            <div class="col">1-2</div>
+            <div class="col">1-3</div>
+        </div>
+        <div class="row">
+            <div class="col">2-1</div>
+            <div class="col">2-2</div>
+            <div class="col">2-3</div>
+        </div>
+        <div class="row">
+            <div class="col">3-1</div>
+            <div class="col">3-2</div>
+            <div class="col">3-3</div>
+        </div>
+        <div class="row">
+            <div class="col">4-1</div>
+            <div class="col">4-2</div>
+            <div class="col">4-3</div>
+        </div>
+    </div>
+    <script>
+        const cols = document.querySelectorAll(".col")
+        cols.forEach(elm => {
+            elm.addEventListener("click", e => {
+                e.currentTarget.classList.toggle("active")
+            })
+        })
+    </script>
+</body>
+
+</html>`);
+
+})
+
+server.listen(9000, () => {
+    console.log("link start,http://localhost:9000");
+})
