@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>記帳軟體</title>
+  <link rel="stylesheet" href="/bs/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <div class="container-md mt-1">
+    <div class="input-group input-group-lg">
+      <div class="btn btn-primary input-group-text btn-prev">
+        <i class="fa-solid fa-caret-left"></i>
+      </div>
+      <input type="date" class="form-control myDate" value="<%=date%>">
+      <div class="btn btn-primary input-group-text btn-next">
+        <i class="fa-solid fa-caret-right"></i>
+      </div>
+      <div class="btn btn-primary input-group-text btn-add">
+        <i class="fa-solid fa-calculator"></i>
+      </div>
+    </div>
+    <div class="unit bg-primary mt-2 text-white rounded-top">
+      <div class="sn d-flex align-items-center ps-2">#</div>
+      <div class="title d-flex align-items-center fs-6">項目名稱</div>
+      <div class="btn btn-primary btn-sm fs-6 sort">分類</div>
+      <div class="btn btn-primary btn-sm fs-6 money text-end pe-2">金額</div>
+    </div>
+    <div class="lists">
+      <% let totalMoney=0;
+        data.forEach((item,index)=> {
+        totalMoney+=item.money
+        let sortName = sort.find(st => st.id === item.sort)
+        console.log(sortName);
+        %>
+        <div class="unit fs-6 list pb-1">
+          <div class="sn ps-2">
+            <%=index+1%>
+          </div>
+          <div class="title">
+            <%=item.title%>
+          </div>
+          <div class="sort">
+            <%=sortName.name%>
+          </div>
+          <div class="money text-end pe-2">
+            <%=item.money%>
+          </div>
+        </div>
+        <%})%>
+    </div>
+    <div class="bg-primary mt-2 text-white rounded-bottom">
+      <div class="text-end pe-2 text-white fs-3">
+        <%=totalMoney%>
+      </div>
+    </div>
+  </div>
+  <div class="offcanvas offcanvas-start" data-bs-scroll="false" data-bs-backdrop="static" tabindex="-1" id="inputArea"
+    aria-labelledby="offcanvasWithBothOptionsLabel">
+    <div class="offcanvas-body">
+      <form action="/expe" method="post">
+        <div class="input-group input-group-lg mb-2">
+          <span class="input-group-text">消費名稱</span>
+          <input type="text" name="title" class="form-control">
+        </div>
+        <div class="input-group input-group-lg mb-2">
+          <span class="input-group-text">消費金額</span>
+          <input type="number" name="money" class="form-control">
+        </div>
+        <div class="input-group input-group-lg mb-2">
+          <span class="input-group-text">消費分類</span>
+          <select name="sort" class="form-select">
+            <option value selected disabled>請選擇</option>
+            <% sort.forEach(item=> { %>
+              <option value="<%=item.id%>">
+                <%=item.name%>
+              </option>
+              <% }) %>
+          </select>
+        </div>
+        <input type="hidden" name="date" value="<%=date%>">
+        <input type="hidden" name="id">
+        <div class="newSet mb-2 d-flex">
+          <div class="btn btn-lg btn-success me-2 ms-auto btn-end">結束輸入</div>
+          <div class="btn btn-lg btn-primary me-2 btn-send">送出</div>
+          <div class="btn btn-lg btn-warning" data-bs-dismiss="offcanvas">取消</div>
+        </div>
+        <div class="updateSet d-flex">
+          <div class="btn btn-lg btn-danger me-2 btn-del">刪除</div>
+          <div class="btn btn-lg btn-primary me-2 ms-auto btn-update">送出</div>
+          <div class="btn btn-lg btn-warning" data-bs-dismiss="offcanvas">取消</div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/bs/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const myDate = document.querySelector(".myDate")
+    const btnPrev = document.querySelector(".btn-prev")
+    const btnNext = document.querySelector(".btn-next")
+    const btnAdd = document.querySelector(".btn-add")
+    const newSet = document.querySelector(".newSet")
+    const updateSet = document.querySelector(".updateSet")
+    const bsOffcanvas = new bootstrap.Offcanvas("#inputArea")
+    const btnSend = document.querySelector(".btn-send")
+    const form1 = document.querySelector("form")
+    const lists = document.querySelectorAll(".lists")
+
+    myDate.addEventListener("change", e => {
+      let date = e.currentTarget.value;
+      window.location.href = `/expe/d/${date}`
+    })
+
+    btnPrev.addEventListener("click", e => {
+      let date = new Date(myDate.value);
+      date.setDate(date.getDate() - 1);
+      let dateStr = date.toISOString().split("T")[0]
+      window.location.href = `/expe/d/${dateStr}`
+    })
+
+    btnNext.addEventListener("click", e => {
+      let date = new Date(myDate.value);
+      date.setDate(date.getDate() + 1);
+      let dateStr = date.toISOString().split("T")[0]
+      window.location.href = `/expe/d/${dateStr}`
+    })
+
+    btnAdd.addEventListener("click", e => {
+      document.querySelector("[name=title]").value = ""
+      document.querySelector("[name=money]").value = ""
+      document.querySelector("[name=id]").value = ""
+      document.querySelector("select").selectedIndex = 0
+      newSet.classList.add("d-flex")
+      newSet.classList.remove("d-none")
+      updateSet.classList.add("d-none")
+      updateSet.classList.remove("d-flex")
+
+      bsOffcanvas.show()
+    })
+
+    btnSend.addEventListener("click", e => {
+
+      form1.submit();
+    });
+
+    lists.forEach(list => {
+      list.addEventListener("click", e => {
+        newSet.classList.remove("d-flex");
+        newSet.classList.add("d-none");
+        updateSet.classList.remove("d-none");
+        updateSet.classList.add("d-flex");
+        bsOffcanvas.show();
+      });
+    });
+
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.unit {
+  --sn-width: 40px;
+  --sort-width: 60px;
+  --money-width: 80px;
+  position: relative;
+  display: flex;
+}
+
+.unit .sn {
+  width: var(--sn-width);
+}
+
+.unit .title {
+  width: calc(100% - var(--sn-width) - var(--sort-width) - var(--money-width));
+}
+
+.unit .sort {
+  width: var(--sort-width);
+}
+
+.unit .money {
+  width: var(--money-width);
+}
+
+.list {
+  background-color: #f5f5f5;
+}
+
+.list:nth-child(even) {
+  background-color: #e2e1e1;
+}
+
+.list:hover {
+  background-color: #f4a148;
+}
