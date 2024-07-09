@@ -1,0 +1,18 @@
+{
+  "name": "testargs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"nodemon --env-file=dev.env test03.mjs",
+    "start": "node --env-file=dist.env test03.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.10.2"
+  }
+}
