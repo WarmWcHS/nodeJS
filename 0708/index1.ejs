@@ -46,7 +46,6 @@
           <%=totalMoney%>
         </div>
       </div>
-      <input type="hidden" name="data" value="<%=JSON.stringify(data)%>">
     </div>
     <div class="offcanvas offcanvas-start" data-bs-scroll="false" data-bs-backdrop="static" tabindex="-1" id="inputArea" aria-labelledby="offcanvasWithBothOptionsLabel">
       <div class="offcanvas-body">
@@ -97,9 +96,8 @@
       const bsOffcanvas = new bootstrap.Offcanvas("#inputArea");
       const btnSend = document.querySelector(".btn-send");
       const form1 = document.querySelector("form");
-      
-      const btnUpdate = document.querySelector(".btn-update")
-      const btnDel =document.querySelector(".btn-del")
+      const lists = document.querySelectorAll(".list");
+      const btnUpdate = document.querySelector(".btn-update");
 
       myDate.addEventListener("change", e => {
         let date = e.currentTarget.value;
@@ -136,57 +134,10 @@
 
         form1.submit();
       });
-      
-      addListBeh()
 
-      btnUpdate.addEventListener("click", e => {
-        let url = "/expe";
-        const formDate = new FormData(form1);
-        const date=document.querySelector("[name=date]").value;
-        fetch(url, {
-          method:"PUT",
-          body: formDate
-        }).then(response => response.json()).then(result => {
-          if(result.result === "success"){
-            // 更新方法1:整頁刷新
-            // window.location.href = `/expe/d/${date}`;
-            // 更新方法2:根據回傳資料部分刷新
-            updateData(result.data, result.sort2)
-          }else{
-            alert("更新錯誤")
-          };
-        }).catch(err => {
-          console.log(err);
-        })
-      })
-
-      btnDel.addEventListener("click", e => {
-        let url = "/expe"
-        const formDate = new FormData(form1)
-        fetch(url, {
-          method:"DELETE",
-          body: formDate
-        }).then(response => response.json()).then(result => {
-          if(result.result === "success"){
-            updateData(result.data, result.sort2)
-          }else{
-            alert("更新錯誤")
-          };
-        }).catch(err => {
-          console.log(err);
-        })
-
-      })
-
-      function addListBeh(){
-        const lists = document.querySelectorAll(".list");
-        lists.forEach(list => {
+      lists.forEach(list => {
         list.addEventListener("click", e => {
-          const data2 =JSON.parse(document.querySelector("[name=data]").value) 
           const id = e.currentTarget.getAttribute("idn");
-          const re1=data2.find(d => d.id === parseInt(id))
-          console.log(re1);
-
           const title = e.currentTarget.getAttribute("title");
           const money = e.currentTarget.getAttribute("money");
           const sort = e.currentTarget.getAttribute("sort");
@@ -201,7 +152,29 @@
           bsOffcanvas.show();
         });
       });
-      }
+
+      btnUpdate.addEventListener("click", e => {
+        let url = "/expe";
+        const form2 = document.querySelector("form");
+        const dateString = document.querySelector("[name=date]").value;
+        const formData = new FormData(form2);
+        fetch(url, {
+          method: "PUT",
+          body: formData
+        }).then(response => response.json()).then(result => {
+          if(result.result === "success"){
+            // 更新第一種方法: 整頁刷新
+            // window.location.href = `/expe/d/${dateString}`;
+            // 第二種方法: 根據回傳資料, 部分刷新
+            updateData(result.data, result.sort2);
+          }else{
+            alert("更新錯誤")
+          };
+        }).catch(error => {
+          console.log(error);
+        });
+      });
+
 
       function updateData(data, sort2){
         const lists = document.querySelector(".lists");
@@ -221,8 +194,7 @@
           node.innerHTML = template;
           lists.append(node.children[0]);
         });
-        totalMoneyElm.innerHTML =totalMoney;
-        addListBeh()
+        totalMoneyElm.innerHTML = totalMoney;
         bsOffcanvas.hide();
       }
     </script>

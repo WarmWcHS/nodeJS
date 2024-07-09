@@ -1,8 +1,11 @@
 import express from "express"
 import moment from "moment";
 import connect from "../db.js"
-import connect2 from "../db2.js"
-var router = express.Router();
+import connect2 from "../db3.js"
+import multer from "multer";
+const router = express.Router();
+const upload = multer();
+
 
 /* GET users listing. */
 router.get('/', (req, res) => {
@@ -20,12 +23,12 @@ router.get('/d/:date', async (req, res) => {
     // return [{id:1,name:"壞掉了"}]
     return []
   })
-  let [data] = await connect2.execute(
+  const [data] = await connect2.execute(
     "SELECT * FROM `expense` WHERE `date` = ?",
     [date1]
   )
   // console.log(data);
-  res.render('index', { date: date1, sort,data });
+  res.render('index', { date: date1, sort, data });
 });
 
 router.post('/', async (req, res) => {
@@ -46,12 +49,63 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.put('/', (req, res) => {
-  res.send("修改指定日期消費");
+router.put('/', upload.none(), async (req, res) => {
+  // res.send("修改指定日期消費");
+  let { title, sort, money, date, id } = req.body
+  sort = parseInt(sort)
+  money = parseInt(money)
+  id = parseInt(id)
+  const [results] = await connect2.execute(
+    "UPDATE `expense` SET `title` = ?, `sort` = ?, `money` = ?, `date` = ? WHERE `expense`.`id` = ?;",
+    [title, sort, money, date, id]
+  ).catch(err => {
+    console.log(err)
+    return [[]]
+  })
+
+  const [data] = await connect2.execute(
+    "SELECT * FROM `expense` WHERE `date` = ?",
+    [date]
+  )
+  const [sort2] = await connect2.execute(
+    "SELECT * FROM `sort`"
+  )
+  if (results.changedRows) {
+    res.json({ result: "success",data,sort2 })
+  } else {
+    res.json({ result: "fail" })
+  }
+
 });
 
-router.delete('/', (req, res) => {
-  res.send("刪除指定日期消費");
+router.delete('/',upload.none(), async(req, res) => {
+  // res.send("刪除指定日期消費");
+  let { date, id } = req.body
+  id = parseInt(id)
+  const [results] = await connect2.execute(
+    "DELETE FROM `expense` WHERE `expense`.`id` = ?;",
+    [id]
+  ).catch(err => {
+    console.log(err)
+    return [[]]
+  })
+
+  const [data] = await connect2.execute(
+    "SELECT * FROM `expense` WHERE `date` = ?",
+    [date]
+  )
+  const [sort2] = await connect2.execute(
+    "SELECT * FROM `sort`"
+  )
+
+  console.log(results);
+
+  if (results.affectedRows >=1) {
+    res.json({ result: "success",data,sort2 })
+  } else {
+    res.json({ result: "fail" })
+  }
+
 });
 
 
