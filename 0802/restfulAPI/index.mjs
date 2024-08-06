@@ -123,10 +123,10 @@ app.get("/api/users/logout", (req, res, next) => {
         return
     }
     const token = jwt.sign({
-        account,
-        name,
-        mail,
-        head
+        account:undefined,
+        name:undefined,
+        mail:undefined,
+        head:undefined
     }, jwtKey, {
         expiresIn: "-1s"
     })
@@ -236,8 +236,8 @@ app.delete("/api/users/:id", async(req, res) => {
 
 
 
-app.listen(3000, () => {
-    console.log("http://localhost:3000");
+app.listen(3001, () => {
+    console.log("http://localhost:3001");
 })
 
 
